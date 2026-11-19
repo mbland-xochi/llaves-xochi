@@ -263,6 +263,14 @@ tbody tr:hover{ background: rgba(0,147,208,0.05); }
 .field-row .field{ flex: 1; }
 .modal-actions{ display:flex; justify-content:flex-end; gap: 8px; margin-top: 18px; }
 .modal-error{ color: var(--danger); font-size: 12px; margin-top: 10px; }
+
+.login-card{ max-width: 380px; margin: 72px auto 0; padding: 32px 28px; text-align:center; background: var(--panel); border: 1px solid var(--grid); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+.login-card .brand-logo{ display:block; height: 52px; margin: 0 auto 18px; }
+.login-card h1{ margin-bottom: 6px; }
+.login-card .subtitle{ margin-bottom: 22px; }
+.login-card .field{ text-align:left; }
+.login-card .modal-error{ min-height: 16px; text-align:left; }
+.login-btn{ width: 100%; margin-top: 8px; justify-content:center; }
 .modal-text{ font-size: 13px; color: var(--text-dim); line-height: 1.5; margin: 0; }
 .code-suggest{ font-family: var(--font-body); font-size: 11px; color: var(--accent-dark); cursor:pointer; margin-top: 4px; display:inline-block; }
 .code-suggest:hover{ text-decoration: underline; }
@@ -367,7 +375,9 @@ const LOGO_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAZgAAACsCAYAAABGp7paAABVLklEQVR4Xu29B3
 // 1. Pega aquí la URL de tu Web App de Apps Script (termina en /exec).
 // 2. Pega aquí el mismo TOKEN que definiste en Code.gs.
 const API_URL = 'https://script.google.com/macros/s/AKfycbyxFrcpF9liS_ZOTqijgjKmKEP_Vm_cn_s4jYiaXEJKTA6-VM-_CsC7xGA6P0W_7adSJg/exec';
-const API_TOKEN = 'xochi.llaves.2026';
+// La clave de acceso NO está en este archivo: se valida en el servidor (Code.gs).
+const SESSION_KEY = 'xochi-llaves-session';
+let session = null;
 let lastSyncError = null;
 
 const DEFAULT_DB = {
@@ -417,20 +427,84 @@ async function apiRequest(action, payload){
     method: 'POST',
     // text/plain evita el preflight CORS que Apps Script no maneja bien
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ token: API_TOKEN, action, payload: payload || {} })
+    body: JSON.stringify({ session, action, payload: payload || {} })
   });
   if(!res.ok){ throw new Error('HTTP ' + res.status); }
   const json = await res.json();
+  if(json.code === 'AUTH'){ endSession(); throw new Error('Sesión expirada. Inicia sesión de nuevo.'); }
   if(!json.ok){ throw new Error(json.error || 'Error desconocido del servidor.'); }
   return json.data;
 }
 
+function getStoredSession(){ try{ return localStorage.getItem(SESSION_KEY); }catch(e){ return null; } }
+function storeSession(v){ try{ if(v){ localStorage.setItem(SESSION_KEY, v); } else { localStorage.removeItem(SESSION_KEY); } }catch(e){} }
+
+function endSession(){
+  session = null;
+  db = null;
+  storeSession(null);
+  closeModal();
+  renderLogin();
+}
+function logout(){ endSession(); }
+
+function renderLogin(){
+  document.getElementById('app').innerHTML = `
+    <div class="login-card">
+      <img src="data:image/png;base64,${LOGO_B64}" alt="Xochi" class="brand-logo">
+      <h1>Registro de llaves</h1>
+      <p class="subtitle">Acceso restringido. Ingresa la clave para continuar.</p>
+      <form onsubmit="return submitLogin(event)">
+        <div class="field">
+          <label>Clave de acceso</label>
+          <input type="password" id="login-clave" autocomplete="current-password">
+        </div>
+        <div id="login-error" class="modal-error"></div>
+        <button type="submit" id="login-btn" class="btn btn-primary login-btn">Entrar</button>
+      </form>
+    </div>
+  `;
+  setTimeout(()=>{ const i = document.getElementById('login-clave'); if(i) i.focus(); }, 0);
+}
+
+async function submitLogin(ev){
+  if(ev) ev.preventDefault();
+  const input = document.getElementById('login-clave');
+  const err = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  const clave = input.value;
+  if(!clave){ err.textContent = 'Ingresa la clave.'; return false; }
+  btn.disabled = true;
+  err.textContent = '';
+  try{
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'login', payload: { clave } })
+    });
+    if(!res.ok){ throw new Error('HTTP ' + res.status); }
+    const json = await res.json();
+    if(!json.ok){ throw new Error(json.error || 'No se pudo iniciar sesión.'); }
+    session = json.data.session;
+    storeSession(session);
+    await loadDB();
+  }catch(e){
+    err.textContent = e.message;
+    btn.disabled = false;
+    input.value = '';
+    input.focus();
+  }
+  return false;
+}
+
 async function loadDB(){
+  if(!session){ return; }
   try{
     const data = await apiRequest('getAll', {});
     db = { buildings: DEFAULT_DB.buildings, keys: data.keys || [], log: data.log || [] };
     lastSyncError = null;
   }catch(e){
+    if(!session){ return; } // sesión expirada: ya se mostró el login
     db = db || structuredClone(DEFAULT_DB);
     lastSyncError = e.message || 'No se pudo conectar con el servidor.';
   }
@@ -869,6 +943,7 @@ function renderHomeView(){
     <div class="footer-actions">
       <span class="footer-note">Datos guardados en Google Sheets · compartido entre las 4 sedes.</span>
       <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="logout()">Cerrar sesión</button>
         <button class="btn btn-ghost" onclick="exportCSV()">Exportar CSV</button>
         <button class="btn btn-ghost btn-danger-text" onclick="resetAll()">Reiniciar registro</button>
       </div>
@@ -943,7 +1018,8 @@ function render(){
   }
 }
 
-loadDB();
+session = getStoredSession();
+if(session){ loadDB(); } else { renderLogin(); }
 // Refresca en segundo plano cada 25s para ver cambios hechos desde otra sede
 setInterval(loadDB, 25000);
 </script>
