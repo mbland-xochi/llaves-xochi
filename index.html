@@ -264,6 +264,7 @@ tbody tr:hover{ background: rgba(0,147,208,0.05); }
 .modal-actions{ display:flex; justify-content:flex-end; gap: 8px; margin-top: 18px; }
 .modal-error{ color: var(--danger); font-size: 12px; margin-top: 10px; }
 
+body.login-mode{ background: #f3f7fb; } /* fondo de la pantalla de acceso; la tarjeta sigue blanca */
 .login-card{ max-width: 380px; margin: 72px auto 0; padding: 32px 28px; text-align:center; background: var(--panel); border: 1px solid var(--grid); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
 .login-card .brand-logo{ display:block; height: 52px; margin: 0 auto 18px; }
 .login-card h1{ margin-bottom: 6px; }
@@ -449,6 +450,7 @@ function endSession(){
 function logout(){ endSession(); }
 
 function renderLogin(){
+  document.body.classList.add('login-mode');
   document.getElementById('app').innerHTML = `
     <div class="login-card">
       <img src="data:image/png;base64,${LOGO_B64}" alt="Xochi" class="brand-logo">
@@ -1011,6 +1013,7 @@ function renderBuildingView(id){
 }
 
 function render(){
+  document.body.classList.remove('login-mode');
   if(currentView==='building' && activeBuilding!=='all'){
     renderBuildingView(activeBuilding);
   }else{
