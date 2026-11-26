@@ -850,20 +850,6 @@ async function logAction(keyId, actionType){
   }
 }
 
-function resetAll(){
-  askConfirm('Esto borrará TODO el registro y bitácora para las 4 sedes. ¿Continuar?', ()=>{
-    askConfirm('Confirma una vez más: se perderán todos los datos guardados. ¿Seguro?', async ()=>{
-      try{
-        const data = await apiRequest('resetAll', {});
-        db.keys = data.keys; db.log = data.log;
-        render();
-      }catch(e){
-        openModal(`<h3>No se pudo reiniciar</h3><p class="modal-text">${e.message}</p><div class="modal-actions"><button class="btn btn-primary" onclick="closeModal()">Cerrar</button></div>`);
-      }
-    });
-  });
-}
-
 function refreshNow(){ loadDB(); }
 
 function setActiveBuilding(id){
@@ -1071,7 +1057,6 @@ function renderHomeView(){
       <div style="display:flex;gap:8px;">
         <button class="btn btn-ghost" onclick="logout()">Cerrar sesión</button>
         <button class="btn btn-ghost" onclick="exportCSV()">Exportar CSV</button>
-        <button class="btn btn-ghost btn-danger-text" onclick="resetAll()">Reiniciar registro</button>
       </div>
     </div>
   `;
