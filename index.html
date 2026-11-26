@@ -168,6 +168,7 @@ button{ font-family: var(--font-body); cursor: pointer; }
 
 /* Table */
 .table-panel{
+  overflow-x: auto;
   background: var(--panel);
   border: 1px solid var(--grid);
   border-radius: var(--radius);
@@ -190,13 +191,15 @@ thead th{
 tbody td{ padding: 11px 14px; border-bottom: 1px solid var(--grid-soft); vertical-align: middle; }
 tbody tr:last-child td{ border-bottom: none; }
 tbody tr:hover{ background: rgba(0,147,208,0.05); }
-.key-code{ font-family: var(--font-mono); font-size: 12px; color: var(--accent-dark); }
+.key-code{ font-family: var(--font-mono); font-size: 12px; color: var(--accent-dark); white-space: nowrap; }
 .badge{
   font-family: var(--font-body);
   font-size: 10px;
   padding: 3px 7px;
   border-radius: 2px;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+  display: inline-block;
 }
 .badge-master{ background: rgba(0,147,208,0.12); color: var(--accent-dark); border: 1px solid rgba(0,147,208,0.3); }
 .badge-single{ background: rgba(143,163,184,0.1); color: var(--text-dim); border: 1px solid var(--grid); }
@@ -276,14 +279,6 @@ body.login-mode{ background: #f3f7fb; } /* fondo de la pantalla de acceso; la ta
 .code-suggest{ font-family: var(--font-body); font-size: 11px; color: var(--accent-dark); cursor:pointer; margin-top: 4px; display:inline-block; }
 .code-suggest:hover{ text-decoration: underline; }
 
-.chips-row{ display:flex; gap:6px; flex-wrap:wrap; margin-top: 6px; }
-.mini-chip{
-  font-family: var(--font-body); font-size: 11px; color: var(--text-dim);
-  background: var(--grid-soft); border: 1px solid var(--grid); border-radius: 2px;
-  padding: 3px 7px; cursor: pointer;
-}
-.mini-chip:hover{ color: var(--accent-dark); border-color: var(--accent); }
-
 .loading{ padding: 60px 0; text-align:center; color: var(--text-faint); font-family: var(--font-body); font-size: 12px; letter-spacing: 1px; }
 
 .sync-banner{ display:flex; align-items:center; justify-content:space-between; gap: 12px; background: rgba(255,198,0,0.14); border: 1px solid rgba(255,198,0,0.45); color: var(--text); font-family: var(--font-body); font-size: 12.5px; padding: 10px 14px; border-radius: var(--radius); margin-bottom: 18px; }
@@ -317,14 +312,40 @@ body.login-mode{ background: #f3f7fb; } /* fondo de la pantalla de acceso; la ta
 
 .legend-row{ display:flex; gap: 18px; padding: 14px 18px 6px; flex-wrap: wrap; }
 .legend-item{ display:flex; align-items:center; gap: 7px; font-size: 11.5px; color: var(--text-dim); font-family: var(--font-body); }
-.led{ width: 11px; height: 11px; border-radius: 50%; display:inline-block; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); flex-shrink:0; }
+.led{ width: 18px; height: 7px; border-radius: 2px; display:inline-block; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); flex-shrink:0; }
+
+/* Barra de copias: un segmento por copia */
+.copybar{ display:flex; gap:2px; width: 78%; max-width: 84px; height: 8px; }
+.copybar .seg{ flex:1; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+.seg.led-green, .seg.led-orange, .seg.led-red{ box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+.slot-copy.c-out{ color: #9a6d00; font-weight:600; }
+.slot-copy.c-late{ color: var(--danger); font-weight:700; }
+
+/* Detalle de llave */
+.modal.wide{ max-width: 520px; max-height: 88vh; overflow-y: auto; }
+.detail-head{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin: -6px 0 14px; font-size: 12px; color: var(--text-dim); }
+.detail-section{ font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 16px 0 6px; }
+.detail-notes{ background: var(--grid-soft); border: 1px solid var(--grid); border-radius: var(--radius); padding: 10px 12px; font-size: 13px; color: var(--text); white-space: pre-wrap; }
+.detail-notes.empty{ color: var(--text-faint); }
+.copy-row{ display:flex; align-items:center; gap:10px; padding: 8px 0; border-top: 1px solid var(--grid-soft); font-size: 12.5px; }
+.copy-row:first-of-type{ border-top:none; }
+.copy-row .led{ flex-shrink:0; }
+.copy-row .ccode{ font-family: var(--font-mono); font-size: 11.5px; color: var(--accent-dark); min-width: 118px; }
+.copy-row .cstate{ flex:1; color: var(--text-dim); }
+.copy-row .cstate.out{ color:#9a6d00; } .copy-row .cstate.late{ color: var(--danger); font-weight:600; }
+.hist-item{ display:flex; gap:8px; font-size: 12px; padding: 5px 0; border-top: 1px solid var(--grid-soft); align-items:baseline; }
+.hist-item:first-of-type{ border-top:none; }
+.hist-item .laction.out{ color: var(--danger); font-weight:600; } .hist-item .laction.in{ color: var(--success); font-weight:600; }
+.hist-item .ltime{ margin-left:auto; color: var(--text-faint); font-size: 11px; white-space:nowrap; }
+.check-field{ display:flex; gap:9px; align-items:flex-start; background: rgba(255,198,0,0.12); border: 1px solid rgba(255,198,0,0.45); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 13px; font-size: 12.5px; color: var(--text); cursor:pointer; }
+.check-field input{ margin-top: 2px; width: 15px; height: 15px; accent-color: var(--accent-dark); flex-shrink:0; }
 .led-green{ background: var(--success); box-shadow: 0 0 5px rgba(63,122,90,0.55), inset 0 0 0 1px rgba(0,0,0,0.1); }
 .led-orange{ background: var(--warning); box-shadow: 0 0 5px rgba(201,122,46,0.55), inset 0 0 0 1px rgba(0,0,0,0.1); }
 .led-red{ background: var(--danger); box-shadow: 0 0 5px rgba(168,73,58,0.6), inset 0 0 0 1px rgba(0,0,0,0.1); }
 
 .cabinet-grid{
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
   gap: 10px;
   padding: 14px 18px 22px;
 }
@@ -332,7 +353,7 @@ body.login-mode{ background: #f3f7fb; } /* fondo de la pantalla de acceso; la ta
   background: var(--grid-soft);
   border: 1px solid var(--grid);
   border-radius: 4px;
-  padding: 13px 8px 10px;
+  padding: 13px 6px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -344,7 +365,9 @@ body.login-mode{ background: #f3f7fb; } /* fondo de la pantalla de acceso; la ta
 .key-slot:hover{ border-color: var(--accent); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
 .key-slot.is-master{ background: rgba(0,147,208,0.12); border: 1px solid rgba(0,147,208,0.3); }
 .key-slot.is-master:hover{ border-color: var(--accent); }
-.slot-code{ font-family: var(--font-mono); font-size: 10.5px; color: var(--text); font-weight: 600; word-break: break-all; line-height:1.3; }
+.slot-code{ font-family: var(--font-mono); font-size: 10px; color: var(--text); font-weight: 600; overflow-wrap: anywhere; line-height:1.3; }
+.slot-copies{ display:flex; flex-direction:column; align-items:center; gap:1px; }
+.slot-copy{ font-family: var(--font-mono); font-size: 8.5px; color: var(--text-dim); line-height:1.35; white-space: nowrap; }
 .slot-area{ font-size: 9.5px; color: var(--text-faint); }
 .add-slot{ border-style: dashed; justify-content: center; color: var(--text-faint); }
 .add-slot:hover{ color: var(--accent-dark); border-color: var(--accent); }
@@ -409,12 +432,49 @@ function goHome(){
   render();
 }
 
-function quickToggle(keyId){
+function openKeyDetail(keyId){
+  const k = db.keys.find(x=>x.id===keyId);
+  if(!k) return;
   const st = keyStatus(keyId);
-  openCheckModal(keyId, st.out ? 'in' : 'out');
+  const codes = copyCodes(k);
+  const multi = st.total>1;
+  const rows = st.copies.map(c=>{
+    const cls = !c.out ? 'led-green' : (c.late ? 'led-red' : 'led-orange');
+    let txt = 'En caja', sc = '';
+    if(c.out){
+      txt = `Fuera · ${esc(c.person)} (${c.days}d)${c.authorized ? ' · autorizado +3 días' : ''}`;
+      sc = c.late ? 'late' : 'out';
+    }
+    const btn = c.out
+      ? `<button class="btn btn-sm" onclick="openCheckModal('${k.id}','in',${c.copy})">Devolver</button>`
+      : `<button class="btn btn-sm" onclick="openCheckModal('${k.id}','out',${c.copy})">Retirar</button>`;
+    return `<div class="copy-row"><span class="led ${cls}"></span><span class="ccode">${multi ? codes[c.copy-1] : esc(k.code)}</span><span class="cstate ${sc}">${txt}</span>${btn}</div>`;
+  }).join('');
+  const hist = db.log.filter(l=>l.keyId===k.id).sort((a,b)=>b.ts-a.ts).slice(0,8).map(l=>{
+    const n = parseInt(l.copy)||1;
+    const auth = (l.authorized===true||l.authorized==='TRUE'||l.authorized==='true') ? ' · autorizado +3 días' : '';
+    return `<div class="hist-item">${multi ? `<span class="key-code">${codes[n-1]||''}</span>` : ''}<span>${esc(l.person)||'—'}</span><span class="laction ${l.action}">${l.action==='out'?'RETIRÓ':'DEVOLVIÓ'}${auth}</span><span class="ltime">${fmtDate(l.ts)}</span></div>`;
+  }).join('') || `<div class="hist-item" style="color:var(--text-faint)">Sin movimientos registrados.</div>`;
+  const notes = (k.notes||'').trim();
+  openModal(`
+    <h3 style="font-family:var(--font-mono);font-size:15px">${esc(k.code)}</h3>
+    <div class="detail-head">
+      <span class="badge ${k.type==='master'?'badge-master':'badge-single'}">${k.type==='master'?'Maestra':'Individual'} · ${numCopies(k)} ${numCopies(k)===1?'copia':'copias'}</span>
+      <span>${esc(buildingLabel(k.buildingId))}</span>${k.area ? `<span>· ${esc(k.area)}</span>` : ''}
+    </div>
+    <div class="detail-section">Notas de registro</div>
+    <div class="detail-notes ${notes?'':'empty'}">${notes ? esc(notes) : 'Sin notas para esta llave.'}</div>
+    <div class="detail-section">${multi ? 'Copias' : 'Estado'}</div>
+    ${rows}
+    <div class="detail-section">Últimos movimientos</div>
+    ${hist}
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal();editKey('${k.id}')">Editar llave</button>
+      <button class="btn btn-primary" onclick="closeModal()">Cerrar</button>
+    </div>
+  `);
+  document.getElementById('modalContent').classList.add('wide');
 }
-
-const AREA_SUGGESTIONS = ['ADMIN','MTTO','CASETA','BODEGA','ELEC','SIST'];
 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 
@@ -518,12 +578,36 @@ function buildingLabel(id){
   return b ? b.label : id;
 }
 
-function keyStatus(keyId){
-  const entries = db.log.filter(l=>l.keyId===keyId).sort((a,b)=>a.ts-b.ts);
-  if(entries.length===0) return { out:false };
+function esc(v){
+  return String(v ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function numCopies(k){ return Math.max(1, parseInt(k.copies) || 1); }
+
+// Estado de UNA copia: su último movimiento (los registros sin 'copy' cuentan como copia 1)
+function copyStatus(keyId, n){
+  const entries = db.log.filter(l=>l.keyId===keyId && (parseInt(l.copy)||1)===n).sort((a,b)=>a.ts-b.ts);
+  if(entries.length===0) return { out:false, copy:n };
   const last = entries[entries.length-1];
-  if(last.action==='out') return { out:true, person:last.person, ts:last.ts };
-  return { out:false };
+  if(last.action!=='out') return { out:false, copy:n };
+  const authorized = last.authorized===true || last.authorized==='TRUE' || last.authorized==='true';
+  const d = daysSince(last.ts);
+  return { out:true, copy:n, person:last.person, ts:last.ts, authorized, days:d, late: d>=3 && !authorized };
+}
+
+// Resumen de la llave (todas sus copias)
+function keyStatus(keyId){
+  const k = db.keys.find(x=>x.id===keyId);
+  const total = k ? numCopies(k) : 1;
+  const copies = Array.from({length: total}, (_,i)=>copyStatus(keyId, i+1));
+  const outs = copies.filter(c=>c.out);
+  if(outs.length===0) return { out:false, total, outCount:0, late:false, copies };
+  const oldest = outs.reduce((a,b)=> a.ts<=b.ts ? a : b);
+  return {
+    out:true, total, outCount:outs.length, copies,
+    person: oldest.person, ts: oldest.ts, authorized: oldest.authorized,
+    late: outs.some(c=>c.late)
+  };
 }
 
 function daysSince(ts){ return Math.floor((Date.now()-ts)/86400000); }
@@ -544,7 +628,7 @@ function exportCSV(){
     const st = keyStatus(k.id);
     rows.push([
       buildingLabel(k.buildingId), k.code, k.area, k.type==='master'?'Maestra':'Individual',
-      k.copies, k.lastAudited || '', st.out ? 'Fuera' : 'En caja', st.out ? st.person : '', k.notes||''
+      k.copies, k.lastAudited || '', st.out ? (st.total>1 ? `Fuera ${st.outCount}/${st.total}` : 'Fuera') : 'En caja', st.out ? st.copies.filter(c=>c.out).map(c=>c.person).join(' / ') : '', k.notes||''
     ]);
   });
   const csv = rows.map(r=>r.map(csvEscape).join(',')).join('\n');
@@ -557,6 +641,7 @@ function exportCSV(){
 }
 
 function openModal(html){
+  document.getElementById('modalContent').classList.remove('wide');
   document.getElementById('modalContent').innerHTML = html;
   document.getElementById('overlay').classList.add('show');
 }
@@ -589,13 +674,15 @@ function runConfirm(){
 function suggestCode(){
   const b = document.getElementById('f-building').value;
   const area = (document.getElementById('f-area').value || 'AREA').toUpperCase().replace(/\s+/g,'');
-  const type = document.getElementById('f-type').value;
-  const suffix = type==='master' ? 'M' : '01';
-  document.getElementById('f-code').value = `${b.toUpperCase()}-${area}-${suffix}-A`;
+  document.getElementById('f-code').value = `${b.toUpperCase()}-${area}-01`;
 }
 
-function fillArea(val){
-  document.getElementById('f-area').value = val;
+// Códigos de cada copia: KM145-AREA-01, -02, -03... (el número es el de la copia)
+function copyCodes(k){
+  const n = parseInt(k.copies) || 1;
+  if(n < 2) return [];
+  const base = String(k.code).replace(/-\d{1,2}(-[A-Za-z])?$/, '');
+  return Array.from({length:n}, (_,i)=> `${base}-${String(i+1).padStart(2,'0')}`);
 }
 
 function openKeyModal(existing, defaults){
@@ -623,13 +710,10 @@ function openKeyModal(existing, defaults){
     <div class="field">
       <label>Área / puerta</label>
       <input id="f-area" placeholder="Ej. Oficina administracion" value="${k.area||''}">
-      <div class="chips-row">
-        ${AREA_SUGGESTIONS.map(a=>`<span class="mini-chip" onclick="fillArea('${a}')">${a}</span>`).join('')}
-      </div>
     </div>
     <div class="field">
       <label>Código de llave</label>
-      <input id="f-code" placeholder="KM145-ADMIN-01-A" value="${k.code||''}" style="font-family:var(--font-mono)">
+      <input id="f-code" placeholder="KM145-ADMIN-01" value="${k.code||''}" style="font-family:var(--font-mono)">
       <span class="code-suggest" onclick="suggestCode()">Sugerir código →</span>
     </div>
     <div class="field-row">
@@ -694,18 +778,43 @@ function deleteKey(id){
   });
 }
 
-function openCheckModal(keyId, actionType){
+function openCheckModal(keyId, actionType, copyN){
   const k = db.keys.find(x=>x.id===keyId);
+  const st = keyStatus(keyId);
+  const codes = copyCodes(k);
+  // copias que se pueden retirar (en caja) o devolver (fuera)
+  const options = st.copies.filter(c=> actionType==='out' ? !c.out : c.out);
+  if(options.length===0){
+    openModal(`<h3>${actionType==='out' ? 'Retirar llave' : 'Devolver llave'}</h3>
+      <p class="modal-text">${actionType==='out' ? 'Todas las copias de esta llave ya están fuera.' : 'Todas las copias de esta llave ya están en caja.'}</p>
+      <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal()">Cerrar</button></div>`);
+    return;
+  }
+  const sel = options.some(c=>c.copy===copyN) ? copyN : options[0].copy;
+  const copyField = st.total>1 ? `
+    <div class="field">
+      <label>${actionType==='out' ? 'Copia que se retira' : 'Copia que se devuelve'}</label>
+      <select id="f-copy" onchange="onCopyChange('${keyId}','${actionType}')">
+        ${options.map(c=>`<option value="${c.copy}" ${c.copy===sel?'selected':''}>${codes[c.copy-1]}${actionType==='in' ? ' · '+esc(c.person) : ''}</option>`).join('')}
+      </select>
+    </div>` : '';
+  const personIn = actionType==='in' ? (options.find(c=>c.copy===sel)||{}).person||'' : '';
   openModal(`
     <h3>${actionType==='out' ? 'Retirar llave' : 'Devolver llave'}</h3>
     <div class="field">
       <label>Llave</label>
-      <input value="${k.code}" disabled>
+      <input value="${esc(k.code)}" disabled>
     </div>
+    ${copyField}
     <div class="field">
       <label>${actionType==='out' ? 'Nombre de quien retira' : 'Confirmar devolución'}</label>
-      <input id="f-person" placeholder="Nombre completo" ${actionType==='in'?`value="${keyStatus(keyId).person||''}" disabled`:''}>
+      <input id="f-person" placeholder="Nombre completo" ${actionType==='in'?`value="${esc(personIn)}" disabled`:''}>
     </div>
+    ${actionType==='out' ? `
+    <label class="check-field">
+      <input type="checkbox" id="f-auth">
+      <span><strong>Retiro autorizado por más de 3 días.</strong> Si se marca, la copia no se pondrá en rojo al pasar 3 días fuera.</span>
+    </label>` : ''}
     <div id="modal-error" class="modal-error"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
@@ -714,12 +823,22 @@ function openCheckModal(keyId, actionType){
   `);
 }
 
+function onCopyChange(keyId, actionType){
+  if(actionType!=='in') return;
+  const n = parseInt(document.getElementById('f-copy').value);
+  document.getElementById('f-person').value = copyStatus(keyId, n).person || '';
+}
+
 async function logAction(keyId, actionType){
   let person = document.getElementById('f-person').value.trim();
   if(actionType==='out' && !person){ document.getElementById('modal-error').textContent = 'Ingresa el nombre de la persona.'; return; }
-  if(actionType==='in') person = keyStatus(keyId).person || '';
+  const copyEl = document.getElementById('f-copy');
+  const copy = copyEl ? parseInt(copyEl.value) : 1;
+  if(actionType==='in') person = copyStatus(keyId, copy).person || '';
+  const authEl = document.getElementById('f-auth');
+  const authorized = actionType==='out' && !!(authEl && authEl.checked);
   try{
-    const data = await apiRequest('logAction', { keyId, person, action: actionType });
+    const data = await apiRequest('logAction', { keyId, person, action: actionType, copy, authorized });
     db.keys = data.keys; db.log = data.log;
     closeModal();
     render();
@@ -781,18 +900,23 @@ function renderCabinet(buildingId){
   const keys = db.keys.filter(k=>k.buildingId===buildingId);
   const slots = keys.map(k=>{
     const st = keyStatus(k.id);
-    let ledClass = 'led-green', title = 'En caja';
-    if(st.out){
-      const d = daysSince(st.ts);
-      if(d>=3){ ledClass = 'led-red'; title = `Fuera · ${st.person} (${d} días)`; }
-      else{ ledClass = 'led-orange'; title = `Fuera · ${st.person} (${d} día${d===1?'':'s'})`; }
-    }
-    const masterClass = k.type==='master' ? 'is-master' : '';
+    const codes = copyCodes(k);
+    const multi = st.total>1;
+    const cls = c => !c.out ? 'led-green' : (c.late ? 'led-red' : 'led-orange');
+    const segs = st.copies.map(c=>{
+      let t = !c.out ? 'En caja' : `Fuera · ${c.person} (${c.days} día${c.days===1?'':'s'})${c.authorized?' · autorizado +3 días':''}`;
+      return `<span class="seg ${cls(c)}" title="${esc((multi?codes[c.copy-1]+': ':'')+t)}"></span>`;
+    }).join('');
+    let title = !st.out ? 'En caja' : (multi ? `Fuera ${st.outCount} de ${st.total} copias` : `Fuera · ${st.person} (${st.copies[0].days} día${st.copies[0].days===1?'':'s'})`);
     if(k.type==='master') title = `Maestra · ${title}`;
-    return `<div class="key-slot ${masterClass}" onclick="quickToggle('${k.id}')" title="${title}">
-      <span class="led ${ledClass}"></span>
-      <span class="slot-code">${k.code}</span>
-      ${k.area ? `<span class="slot-area">${k.area}</span>` : ''}
+    const masterClass = k.type==='master' ? 'is-master' : '';
+    const list = multi
+      ? `<span class="slot-copies">${st.copies.map(c=>`<span class="slot-copy ${!c.out?'':(c.late?'c-late':'c-out')}">${codes[c.copy-1]}</span>`).join('')}</span>`
+      : `<span class="slot-code">${esc(k.code)}</span>`;
+    return `<div class="key-slot ${masterClass}" onclick="openKeyDetail('${k.id}')" title="${esc(title)}">
+      <span class="copybar">${segs}</span>
+      ${list}
+      ${k.area ? `<span class="slot-area">${esc(k.area)}</span>` : ''}
     </div>`;
   }).join('');
 
@@ -829,8 +953,7 @@ function renderTableRows(){
     let statusHtml;
     if(st.out){
       const d = daysSince(st.ts);
-      const overdue = d>=3;
-      statusHtml = `<span class="status-out ${overdue?'overdue':''}">Fuera · ${st.person} (${d}d)</span>`;
+      statusHtml = `<span class="status-out ${st.late?'overdue':''}">Fuera${st.total>1?` ${st.outCount}/${st.total}`:''} · ${esc(st.person)} (${d}d)${st.authorized&&d>=3?' · autorizado':''}</span>`;
     }else{
       statusHtml = `<span class="status-in">En caja</span>`;
     }
@@ -842,10 +965,8 @@ function renderTableRows(){
       <td>${k.lastAudited ? fmtDate(new Date(k.lastAudited).getTime()) : '—'}</td>
       <td>${statusHtml}</td>
       <td class="row-actions">
-        ${st.out
-          ? `<button class="btn btn-sm" onclick="openCheckModal('${k.id}','in')">Devolver</button>`
-          : `<button class="btn btn-sm" onclick="openCheckModal('${k.id}','out')">Retirar</button>`
-        }
+        ${st.outCount < st.total ? `<button class="btn btn-sm" onclick="openCheckModal('${k.id}','out')">Retirar</button>` : ''}
+        ${st.out ? `<button class="btn btn-sm" onclick="openCheckModal('${k.id}','in')">Devolver</button>` : ''}
         <button class="btn btn-sm btn-ghost" onclick="editKey('${k.id}')">Editar</button>
         <button class="btn btn-sm btn-ghost btn-danger-text" onclick="deleteKey('${k.id}')">✕</button>
       </td>
@@ -865,10 +986,13 @@ function renderLog(buildingId){
   }
   return entries.map(l=>{
     const k = db.keys.find(x=>x.id===l.keyId);
+    const cc = k ? copyCodes(k) : [];
+    const lcode = k ? (cc.length ? (cc[(parseInt(l.copy)||1)-1] || k.code) : k.code) : '(eliminada)';
+    const auth = (l.authorized===true||l.authorized==='TRUE'||l.authorized==='true') ? ' · autorizado' : '';
     return `<div class="log-item">
-      <span class="lcode">${k?k.code:'(eliminada)'}</span>
-      <span class="lperson">${l.person||'—'}</span>
-      <span class="laction ${l.action}">${l.action==='out'?'RETIRÓ':'DEVOLVIÓ'}</span>
+      <span class="lcode">${esc(lcode)}</span>
+      <span class="lperson">${esc(l.person)||'—'}</span>
+      <span class="laction ${l.action}">${l.action==='out'?'RETIRÓ':'DEVOLVIÓ'}${auth}</span>
       <span class="ltime">${fmtDate(l.ts)}</span>
     </div>`;
   }).join('');
@@ -878,10 +1002,7 @@ function computeStats(){
   const total = db.keys.length;
   const out = db.keys.filter(k=>keyStatus(k.id).out).length;
   const masters = db.keys.filter(k=>k.type==='master').length;
-  const overdue = db.keys.filter(k=>{
-    const st = keyStatus(k.id);
-    return st.out && daysSince(st.ts)>=3;
-  }).length;
+  const overdue = db.keys.filter(k=>keyStatus(k.id).late).length;
   return { total, out, masters, overdue };
 }
 
@@ -957,10 +1078,7 @@ function renderBuildingView(id){
   const b = db.buildings.find(x=>x.id===id) || db.buildings[0];
   const keys = db.keys.filter(k=>k.buildingId===b.id);
   const out = keys.filter(k=>keyStatus(k.id).out).length;
-  const overdue = keys.filter(k=>{
-    const st = keyStatus(k.id);
-    return st.out && daysSince(st.ts)>=3;
-  }).length;
+  const overdue = keys.filter(k=>keyStatus(k.id).late).length;
 
   document.getElementById('app').innerHTML = `
     ${syncBanner()}
