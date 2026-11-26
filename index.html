@@ -315,7 +315,7 @@ body.login-mode{ background: #f3f7fb; } /* fondo de la pantalla de acceso; la ta
 .led{ width: 18px; height: 7px; border-radius: 2px; display:inline-block; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); flex-shrink:0; }
 
 /* Barra de copias: un segmento por copia */
-.copybar{ display:flex; gap:2px; width: 78%; max-width: 84px; height: 8px; }
+.copybar{ display:flex; gap:2px; align-self: stretch; height: 8px; }
 .copybar .seg{ flex:1; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
 .seg.led-green, .seg.led-orange, .seg.led-red{ box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
 .slot-copy.c-out{ color: #9a6d00; font-weight:600; }
@@ -344,8 +344,9 @@ body.login-mode{ background: #f3f7fb; } /* fondo de la pantalla de acceso; la ta
 .led-red{ background: var(--danger); box-shadow: 0 0 5px rgba(168,73,58,0.6), inset 0 0 0 1px rgba(0,0,0,0.1); }
 
 .cabinet-grid{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
   gap: 10px;
   padding: 14px 18px 22px;
 }
@@ -353,7 +354,9 @@ body.login-mode{ background: #f3f7fb; } /* fondo de la pantalla de acceso; la ta
   background: var(--grid-soft);
   border: 1px solid var(--grid);
   border-radius: 4px;
-  padding: 13px 6px 10px;
+  padding: 13px 14px 10px;
+  min-width: 108px;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
